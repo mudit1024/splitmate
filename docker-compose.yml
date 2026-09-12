@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17
+
+    container_name: splitmate-postgres
+
+    environment:
+      POSTGRES_DB: splitmate
+      POSTGRES_USER: splitmate
+      POSTGRES_PASSWORD: splitmate_dev_password
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - splitmate-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  splitmate-postgres-data:
