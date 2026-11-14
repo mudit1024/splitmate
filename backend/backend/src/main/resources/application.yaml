@@ -19,3 +19,14 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+
+# Sign-in through AuthReflector, our single sign-on for all apps (SPLIT-19).
+# Register SplitMate on AuthReflector's admin page ("With backend"); the secret is shown once there.
+authreflector:
+  client:
+    issuer-uri: ${AUTH_ISSUER:http://localhost:9000}
+    client-id: splitmate-web
+    client-secret: ${SPLITMATE_CLIENT_SECRET}
+    audience: splitmate-api
+    # Reachable without signing in (the starter's defaults plus the health check)
+    public-paths: [/, /index.html, /assets/**, /favicon.*, /error, /actuator/health, /api/health]

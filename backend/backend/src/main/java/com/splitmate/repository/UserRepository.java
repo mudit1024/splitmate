@@ -1,11 +1,10 @@
 package com.splitmate.repository;
 
-import com.splitmate.entity.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.UUID;
 
-public interface UserRepository extends JpaRepository<User, UUID> {
+import org.springframework.data.jpa.repository.JpaRepository;
 
-    boolean existsByEmailIgnoreCase(String email);
+import com.splitmate.entity.User;
+
+public interface UserRepository extends JpaRepository<User, UUID> {
 }
