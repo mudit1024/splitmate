@@ -29,6 +29,14 @@
 	<properties>
 		<java.version>21</java.version>
 	</properties>
+	<!-- The AuthReflector client starter is published by JitPack from Git tags -->
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -69,9 +77,16 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- Sign-in through AuthReflector, our single sign-on for all apps (SPLIT-19) -->
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-crypto</artifactId>
+			<groupId>com.github.mudit1024</groupId>
+			<artifactId>authReflector</artifactId>
+			<version>0.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

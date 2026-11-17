@@ -31,12 +31,6 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "Validation failed", request, fieldErrors);
     }
 
-    @ExceptionHandler(EmailAlreadyRegisteredException.class)
-    public ResponseEntity<ErrorResponse> handleEmailAlreadyRegistered(HttpServletRequest request) {
-        // Generic message: don't echo the email back
-        return build(HttpStatus.CONFLICT, "Email is already registered", request, List.of());
-    }
-
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleMalformedJson(HttpServletRequest request) {
         // Body missing, not valid JSON, or wrong value types: Jackson failed before the controller ran

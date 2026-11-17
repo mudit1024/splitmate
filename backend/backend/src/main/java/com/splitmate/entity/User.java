@@ -1,21 +1,23 @@
 package com.splitmate.entity;
 
+import java.util.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-import java.util.UUID;
-
+/**
+ * SplitMate's own record of a person (for groups, expenses, balances).
+ * The account itself (password, Google sign-in, ...) lives in AuthReflector; the id here IS the
+ * AuthReflector user id (token "sub"), and name/email are refreshed on every sign-in.
+ */
 // "user" is a reserved word in PostgreSQL
 @Entity
 @Table(name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
@@ -24,17 +26,19 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String passwordHash;
-
     protected User() {
         // Required by JPA
     }
 
-    public User(String name, String email, String passwordHash) {
+    public User(UUID id, String name, String email) {
+        this.id = id;
         this.name = name;
         this.email = email;
-        this.passwordHash = passwordHash;
+    }
+
+    public void updateProfile(String name, String email) {
+        this.name = name;
+        this.email = email;
     }
 
     public UUID getId() {
@@ -47,9 +51,5 @@ public class User {
 
     public String getEmail() {
         return email;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
     }
 }
