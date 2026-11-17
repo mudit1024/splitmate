@@ -1,7 +1,6 @@
 package com.splitmate.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,7 +11,6 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import com.authreflector.client.AuthReflectorSignInEvent;
 import com.authreflector.client.AuthReflectorUser;
@@ -30,21 +28,17 @@ class UserProvisioningTest {
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
         provisioning = new UserProvisioning(userRepository);
     }
 
+    // The row is created with an atomic upsert (see UserProvisioningConcurrencyTest for the race it prevents)
     @Test
     void shouldCreateTheLocalUserOnFirstSignIn() {
-        when(userRepository.findById(ID)).thenReturn(Optional.empty());
+        when(userRepository.findById(ID)).thenReturn(Optional.of(new User(ID, "Asha", "asha@example.com")));
 
         provisioning.onSignIn(new AuthReflectorSignInEvent(user("Asha", "asha@example.com")));
 
-        ArgumentCaptor<User> saved = ArgumentCaptor.forClass(User.class);
-        verify(userRepository).save(saved.capture());
-        assertEquals(ID, saved.getValue().getId());
-        assertEquals("Asha", saved.getValue().getName());
-        assertEquals("asha@example.com", saved.getValue().getEmail());
+        verify(userRepository).insertIfAbsent(ID, "Asha", "asha@example.com");
     }
 
     // Name or email changed in AuthReflector: SplitMate's copy follows on the next sign-in

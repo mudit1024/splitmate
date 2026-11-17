@@ -31,9 +31,12 @@ public class UserProvisioning {
     /** Also used for bearer-token callers (mobile), who never pass through a browser sign-in. */
     @Transactional
     public User ensure(AuthReflectorUser account) {
-        User user = userRepository.findById(account.id())
-                .orElseGet(() -> new User(account.id(), account.name(), account.email()));
-        user.updateProfile(account.name(), account.email());
-        return userRepository.save(user);
+        // Upsert first, then load: safe when several requests arrive together on the first sign-in
+        userRepository.insertIfAbsent(account.id(), account.name(), account.email());
+        // Empty only if a DIFFERENT SplitMate user already holds this email (an email moved between accounts)
+        User user = userRepository.findById(account.id()).orElseThrow(() -> new IllegalStateException(
+                "Email " + account.email() + " belongs to another SplitMate user"));
+        user.updateProfile(account.name(), account.email()); // saved at commit by JPA dirty checking
+        return user;
     }
 }
